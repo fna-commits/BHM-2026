@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black History Month Trivia Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #FF0000, #00FF00, #000000, #FF0000);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .question-counter {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .question {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .option:hover {
+            background: #e8e9ea;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .option.correct {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .option.incorrect {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            text-align: center;
+        }
+
+        .score {
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .message {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .fun-fact {
+            background: #f0f9ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .fun-fact-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .restart-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: transform 0.2s ease;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .intro {
+            color: #555;
+            line-height: 1.8;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="startScreen" class="start-screen">
+            <h1>🎉 Black History Month Trivia 🎉</h1>
+            <div class="intro">
+                <p>Test your knowledge and celebrate the incredible contributions of Black leaders, innovators, and changemakers throughout history!</p>
+                <p style="margin-top: 15px;">⏱️ <strong>10 questions</strong> • 📚 Learn something new • 🏆 Challenge your colleagues!</p>
+            </div>
+            <button class="start-btn" onclick="startGame()">Start Quiz</button>
+        </div>
+
+        <div id="gameScreen" class="hidden">
+            <h1>Black History Month Trivia</h1>
+            <div class="subtitle">Test your knowledge!</div>
+            
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            
+            <div id="questionCounter" class="question-counter"></div>
+            
+            <div id="question" class="question"></div>
+            
+            <div id="options" class="options"></div>
+            
+            <div id="feedback" class="feedback hidden"></div>
+            
+            <button id="nextBtn" class="next-btn" onclick="nextQuestion()" disabled>Next Question</button>
+        </div>
+
+        <div id="resultsScreen" class="results hidden">
+            <h1>Quiz Complete! 🎊</h1>
+            <div class="score" id="finalScore"></div>
+            <div class="message" id="resultMessage"></div>
+            
+            <div class="fun-fact">
+                <div class="fun-fact-title">💡 Did you know?</div>
+                <div id="finalFact"></div>
+            </div>
+            
+            <button class="restart-btn" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Who was the first African American woman to win the Nobel Prize in Literature?",
+                options: ["Maya Angelou", "Toni Morrison", "Alice Walker", "Zora Neale Hurston"],
+                correct: 1,
+                fact: "Toni Morrison won the Nobel Prize in Literature in 1993 for her powerful novels exploring the African American experience."
+            },
+            {
+                question: "Which NASA mathematician's calculations were critical to the success of early space missions?",
+                options: ["Mae Jemison", "Katherine Johnson", "Dorothy Vaughan", "Mary Jackson"],
+                correct: 1,
+                fact: "Katherine Johnson's precise calculations were essential for the success of John Glenn's orbit and the Apollo 11 moon landing."
+            },
+            {
+                question: "Who was known as the 'Father of Black History' and founded Negro History Week in 1926?",
+                options: ["W.E.B. Du Bois", "Carter G. Woodson", "Marcus Garvey", "Booker T. Washington"],
+                correct: 1,
+                fact: "Carter G. Woodson established Negro History Week in February, which later evolved into Black History Month."
+            },
+            {
+                question: "Which artist became the first Black woman to headline Coachella music festival?",
+                options: ["Rihanna", "Beyoncé", "Alicia Keys", "Janelle Monáe"],
+                correct: 1,
+                fact: "Beyoncé made history in 2018 with her groundbreaking Coachella performance, later documented in 'Homecoming'."
+            },
+            {
+                question: "Who was the first African American to serve on the U.S. Supreme Court?",
+                options: ["Clarence Thomas", "Thurgood Marshall", "Ketanji Brown Jackson", "Colin Powell"],
+                correct: 1,
+                fact: "Thurgood Marshall served on the Supreme Court from 1967 to 1991 and was a pioneering civil rights lawyer before his appointment."
+            },
+            {
+                question: "Which civil rights leader delivered the famous 'I Have a Dream' speech in 1963?",
+                options: ["Malcolm X", "Martin Luther King Jr.", "Jesse Jackson", "Ralph Abernathy"],
+                correct: 1,
+                fact: "Martin Luther King Jr. delivered this iconic speech during the March on Washington for Jobs and Freedom on August 28, 1963."
+            },
+            {
+                question: "Who was the first African American President of the United States?",
+                options: ["Jesse Jackson", "Barack Obama", "Colin Powell", "Kamala Harris"],
+                correct: 1,
+                fact: "Barack Obama served as the 44th President from 2009 to 2017, breaking a significant barrier in American history."
+            },
+            {
+                question: "Which athlete broke baseball's color barrier in 1947?",
+                options: ["Willie Mays", "Hank Aaron", "Jackie Robinson", "Satchel Paige"],
+                correct: 2,
+                fact: "Jackie Robinson joined the Brooklyn Dodgers in 1947, becoming the first African American to play in Major League Baseball in the modern era."
+            },
+            {
+                question: "Who refused to give up her seat on a Montgomery bus in 1955, sparking the bus boycott?",
+                options: ["Coretta Scott King", "Rosa Parks", "Claudette Colvin", "Diane Nash"],
+                correct: 1,
+                fact: "Rosa Parks' act of defiance on December 1, 1955, became a pivotal moment in the Civil Rights Movement and led to a 381-day bus boycott."
+            },
+            {
+                question: "Which groundbreaking talk show host became the first Black female billionaire?",
+                options: ["Oprah Winfrey", "Tyra Banks", "Whoopi Goldberg", "Rihanna"],
+                correct: 0,
+                fact: "Oprah Winfrey became the first Black female billionaire in 2003, and her show ran for 25 years, becoming one of the most influential in television history."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+
+        function startGame() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('questionCounter').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectOption(index);
+                optionsDiv.appendChild(optionDiv);
+            });
+            
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('nextBtn').disabled = true;
+            selectedAnswer = null;
+        }
+
+        function selectOption(index) {
+            if (selectedAnswer !== null) return;
+            
+            selectedAnswer = index;
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) {
+                    opt.classList.add('correct');
+                } else if (i === selectedAnswer) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden');
+            
+            if (selectedAnswer === q.correct) {
+                score++;
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✓ Correct! ' + q.fact;
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = '✗ Not quite. ' + q.fact;
+            }
+            
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+            
+            let message = '';
+            if (percentage === 100) {
+                message = '🌟 Perfect! You\'re a Black History expert!';
+            } else if (percentage >= 80) {
+                message = '🎉 Excellent work! You really know your history!';
+            } else if (percentage >= 60) {
+                message = '👍 Good job! Keep learning and exploring!';
+            } else {
+                message = '📚 Great effort! There\'s always more to discover!';
+            }
+            document.getElementById('resultMessage').textContent = message;
+            
+            const funFacts = [
+                "Black History Month began as 'Negro History Week' in 1926 and expanded to a month-long celebration in 1976.",
+                "The first African American to win an Academy Award was Hattie McDaniel in 1940 for her role in 'Gone with the Wind'.",
+                "George Washington Carver developed over 300 uses for peanuts, helping Southern farmers diversify their crops.",
+                "Shirley Chisholm was the first Black woman elected to Congress in 1968 and the first to run for a major party's presidential nomination.",
+                "The Harlem Renaissance of the 1920s was a golden age of Black artistic and intellectual culture.",
+                "Hidden Figures, released in 2016, brought Katherine Johnson, Dorothy Vaughan, and Mary Jackson's NASA contributions to mainstream attention.",
+                "The 13th Amendment, ratified in 1865, abolished slavery in the United States.",
+                "Madam C.J. Walker became one of America's first female self-made millionaires through her hair care business in the early 1900s."
+            ];
+            
+            document.getElementById('finalFact').textContent = funFacts[Math.floor(Math.random() * funFacts.length)];
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = null;
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            loadQuestion();
+        }
+    </script>
+</body>
+</html>
